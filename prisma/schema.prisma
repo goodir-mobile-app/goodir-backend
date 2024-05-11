@@ -1,0 +1,172 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+//enumRole
+
+enum role {
+  user
+  admin
+  superAdmin
+}
+
+//user
+model user {
+  userId        Int             @id @default(autoincrement())
+  userName      String
+  phone         String          @unique
+  createAt      DateTime        @default(now())
+  updateAt      DateTime        @updatedAt
+  language      category[]
+  course        course[]
+  categoryLevel categoryLevel[]
+  chapter       chapter[]
+  contacts      contacts[]
+  Participant   Participant[]
+  readingGemes  readingGemes[]
+}
+
+//langouges
+
+model category {
+  cateId        Int             @id @default(autoincrement())
+  namelangouge  String
+  image         String
+  creatAt       DateTime        @default(now())
+  updateAt      DateTime        @updatedAt
+  user          user            @relation(fields: [userId], references: [userId])
+  userId        Int
+  categoryLevel categoryLevel[]
+}
+
+//subcate
+
+model categoryLevel {
+  id         Int       @id @default(autoincrement())
+  type       String
+  image      String
+  creatAt    DateTime  @default(now())
+  updateAt   DateTime  @updatedAt
+  course     course[]
+  category   category? @relation(fields: [cateId], references: [cateId])
+  cateId     Int?
+  user       user?     @relation(fields: [userUserId], references: [userId])
+  userUserId Int?
+}
+
+//couser
+model course {
+  couserId      Int           @id @default(autoincrement())
+  titleCourse   String
+  description   String
+  leval         String
+  images        String
+  videos        String?
+  createAt      DateTime      @default(now())
+  updateAt      DateTime      @updatedAt
+  user          user          @relation(fields: [userUserId], references: [userId])
+  userUserId    Int
+  chaper        chapter[]
+  categoryLevel categoryLevel @relation(fields: [levelId], references: [id])
+  levelId       Int
+}
+
+//chapter
+model chapter {
+  id             Int      @id @default(autoincrement())
+  title          String
+  dicription     String
+  creatAt        DateTime @default(now())
+  chapterVedios  String
+  updateAt       DateTime @updatedAt
+  course         course   @relation(fields: [courseCouserId], references: [couserId])
+  courseCouserId Int
+  user           user?    @relation(fields: [userUserId], references: [userId])
+  userUserId     Int?
+}
+
+//contacts
+model contacts {
+  contactId  Int    @id @default(autoincrement())
+  name       String
+  phone      String
+  body       String
+  user       user?  @relation(fields: [userUserId], references: [userId])
+  userUserId Int?
+}
+
+//GroupCall
+
+model GroupCall {
+  id          Int           @id @default(autoincrement())
+  creatorId   Int
+  startTime   DateTime
+  endTime     DateTime?
+  status      String
+  // creator      user          @relation(fields: [creatorId], references: [id])
+  // participants Participant[]
+  Participant Participant[]
+}
+
+//Participant
+
+model Participant {
+  id        Int       @id @default(autoincrement())
+  userId    Int
+  callId    Int
+  joinTime  DateTime
+  leaveTime DateTime?
+  // user      user      @relation(fields: [userId], references: [id])
+  call      GroupCall @relation(fields: [callId], references: [id])
+  user      user      @relation(fields: [userId], references: [userId])
+}
+
+//Games
+//game one 
+
+model readingGemes {
+  id         Int          @id @default(autoincrement())
+  name       String
+  isSuccess  Boolean      @default(false)
+  isWrong    Boolean      @default(false)
+  gameAt     DateTime     @default(now())
+  score      Int          @default(0)
+  correctImg correctImg[]
+  wrongImg   wrongImg[]
+  user       user         @relation(fields: [userId], references: [userId])
+  userId     Int
+}
+
+//correct img
+
+model correctImg {
+  id             Int          @id @default(autoincrement())
+  image          String
+  createAt       DateTime     @default(now())
+  updateAt       DateTime     @updatedAt
+  readingGemes   readingGemes @relation(fields: [readingGemesId], references: [id])
+  readingGemesId Int
+}
+
+//wrong img
+
+model wrongImg {
+  id             Int          @id @default(autoincrement())
+  image1         String
+  image2         String
+  createAt       DateTime     @default(now())
+  updateAt       DateTime     @updatedAt
+  readingGemes   readingGemes @relation(fields: [readingGemesId], references: [id])
+  readingGemesId Int
+}
