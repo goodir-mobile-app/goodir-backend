@@ -40,14 +40,14 @@ model user {
 //langouges
 
 model category {
-  cateId        Int             @id @default(autoincrement())
-  namelangouge  String
-  image         String
-  creatAt       DateTime        @default(now())
-  updateAt      DateTime        @updatedAt
-  user          user            @relation(fields: [userId], references: [userId])
-  userId        Int
-  categoryLevel categoryLevel[]
+  cateId         Int             @id @default(autoincrement())
+  category_name  String
+  category_image String
+  creatAt        DateTime        @default(now())
+  updateAt       DateTime        @updatedAt
+  user           user            @relation(fields: [userId], references: [userId])
+  userId         Int
+  categoryLevel  categoryLevel[]
 }
 
 //subcate
