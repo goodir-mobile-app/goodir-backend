@@ -1,4 +1,7 @@
-import { Prisma } from "@prisma/client";
+import { PrismaClient } from "@prisma/client";
+
+// Instantiate Prisma Client
+const prisma = new PrismaClient();
 
 export const createCategory = async (req, res, next) => {
   try {
@@ -7,9 +10,6 @@ export const createCategory = async (req, res, next) => {
     const category = await prisma.category.create({ data });
     res.status(200).json({ category });
   } catch (error) {
-    if (error instanceof Prisma.PrismaClientKnownRequestError) {
-      return next(error);
-    }
     return next(error);
   }
 };
